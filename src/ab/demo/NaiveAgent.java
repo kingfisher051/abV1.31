@@ -22,6 +22,7 @@ import ab.demo.other.ActionRobot;
 import ab.demo.other.Shot;
 import ab.planner.TrajectoryPlanner;
 import ab.utils.StateUtil;
+import ab.utils.ABUtil;
 import ab.vision.ABObject;
 import ab.vision.GameStateExtractor.GameState;
 import ab.vision.Vision;
@@ -152,8 +153,21 @@ public class NaiveAgent implements Runnable {
 				int dx,dy;
 				{
 					// random pick up a pig
-					ABObject pig = pigs.get(randomGenerator.nextInt(pigs.size()));
-					
+					//ABObject pig = pigs.get(randomGenerator.nextInt(pigs.size()));
+					ABObject pig = null;
+					double min = Double.MAX_VALUE;
+					double rating;
+					int cnt = 0, index = cnt;
+					for (ABObject p: pigs) {
+						rating = (p.getCenter().getX() + 5) * (p.getCenter().getY() + 135);
+						if (rating < min) {
+							min = rating;
+							index = cnt;
+						}
+						cnt++;
+					}
+					pig = pigs.get(index);
+
 					Point _tpt = pig.getCenter();// if the target is very close to before, randomly choose a
 					// point near it
 					if (prevTarget != null && distance(prevTarget, _tpt) < 10) {
@@ -171,7 +185,7 @@ public class NaiveAgent implements Runnable {
 					// do a high shot when entering a level to find an accurate velocity
 					if (firstShot && pts.size() > 1) 
 					{
-						releasePoint = pts.get(1);
+						releasePoint = pts.get(0);
 					}
 					else if (pts.size() == 1)
 						releasePoint = pts.get(0);
@@ -179,7 +193,7 @@ public class NaiveAgent implements Runnable {
 					{
 						// randomly choose between the trajectories, with a 1 in
 						// 6 chance of choosing the high one
-						if (randomGenerator.nextInt(6) == 0)
+						if (randomGenerator.nextInt(7) == 0)
 							releasePoint = pts.get(1);
 						else
 							releasePoint = pts.get(0);
@@ -210,21 +224,33 @@ public class NaiveAgent implements Runnable {
 						case RedBird:
 							tapInterval = 0; break;               // start of trajectory
 						case YellowBird:
-							tapInterval = 65 + randomGenerator.nextInt(25);break; // 65-90% of the way
+							tapInterval = 68 + randomGenerator.nextInt(20);break; // 65-90% of the way
 						case WhiteBird:
 							tapInterval =  70 + randomGenerator.nextInt(20);break; // 70-90% of the way
 						case BlackBird:
 							tapInterval =  70 + randomGenerator.nextInt(20);break; // 70-90% of the way
 						case BlueBird:
-							tapInterval =  65 + randomGenerator.nextInt(20);break; // 65-85% of the way
+							tapInterval =  72 + randomGenerator.nextInt(20);break; // 65-85% of the way
 						default:
 							tapInterval =  60;
 						}
 
 						int tapTime = tp.getTapTime(sling, releasePoint, _tpt, tapInterval);
-						dx = (int)releasePoint.getX() - refPoint.x;
-						dy = (int)releasePoint.getY() - refPoint.y;
+						
+						dx = (int)pts.get(0).getX() - refPoint.x;
+						dy = (int)pts.get(0).getY() - refPoint.y;
 						shot = new Shot(refPoint.x, refPoint.y, dx, dy, 0, tapTime);
+
+						if (!ABUtil.isReachable(vision, _tpt, shot)) {
+							dx = (int)pts.get(1).getX() - refPoint.x;
+							dy = (int)pts.get(1).getY() - refPoint.y;
+							shot = new Shot(refPoint.x, refPoint.y, dx, dy, 0, tapTime);
+							if (!ABUtil.isReachable(vision, _tpt, shot)) {
+								dx = (int)releasePoint.getX() - refPoint.x;
+								dy = (int)releasePoint.getY() - refPoint.y;
+								shot = new Shot(refPoint.x, refPoint.y, dx, dy, 0, tapTime);
+							}
+						}
 					}
 					else
 						{
