@@ -1,15 +1,29 @@
-Level 13:
+Level 21:
 		Number of pigs: 3; 
 		Chosen pig: 0; 
-		RedBird: 0
+		BlueBird: 58
 		Number of pigs: 2; 
-		Chosen pig: 0; 
-		RedBird: 0
+		Chosen pig: 1; 
+		RedBird: 62
 		Number of pigs: 2; 
-		Chosen pig: 0; 
-		RedBird: 0
+		Chosen pig: 1; 
+		YellowBird: 82
 		Number of pigs: 1; 
 		Chosen pig: 0; 
-		RedBird: 0
+		BlueBird: 57
 		Number of pigs: 1; 
 		Chosen pig: 0; 
+		BlueBird: 61
+		Level 21 Score: 80660
+		Total Score: 80660
+
+Level 22:
+		Number of pigs: 7; 
+		Chosen pig: 3; 
+		RedBird: 74
+		Number of pigs: 3; 
+		Chosen pig: 2; 
+		YellowBird: 75
+		Number of pigs: 2; 
+		Chosen pig: 1; 
+		YellowBird: 77

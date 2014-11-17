@@ -122,6 +122,7 @@ public class ABUtil {
 					if( 
 						((ab.contains(point) && !ab.contains(target))||Math.abs(vision.getMBRVision()._scene[point.y][point.x] - 72 ) < 10) 
 						&& point.x < target.x
+						&& point.y < (target.y < releasePoint.y ? releasePoint.y : target.y)
 						) {
 						switch(ab.getType()) {
 						case Hill:
@@ -172,7 +173,7 @@ public class ABUtil {
 		{
 			for (Point point: points) {
 				if (point.x < 840 && point.y < 480 && point.y > 100 && point.x > 400) {
-					if( 
+					if(
 						((ab.contains(point) && !ab.contains(target))||Math.abs(vision.getMBRVision()._scene[point.y][point.x] - 72 ) < 10) 
 						&& point.x < target.x
 						) {

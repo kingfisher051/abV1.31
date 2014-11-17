@@ -320,7 +320,7 @@ public class NaiveAgent implements Runnable {
 						switch (aRobot.getBirdTypeOnSling()) 
 						{
 						case RedBird:
-							tapInterval = 0; 
+							tapInterval =  55 + randomGenerator.nextInt(20);
 							if (writeToFile) {
 								try {
 									logger.info("		RedBird: " + tapInterval);
@@ -378,68 +378,90 @@ public class NaiveAgent implements Runnable {
 								reachable = false;
 							}
 						}
-						if (repeat != 0 && randomGenerator.nextInt(2) == 0 && _tpt != null && shot != null) {
-							ABObject obj = ABUtil.getLeftObsOfTrajectory(vision, _tpt, shot);
-							if (obj != null) {
-								_tpt = obj.getCenter();
-								_tpt.x -= obj.width;
-								_tpt.y -= obj.height;
-								pts = tp.estimateLaunchPoint(sling, _tpt);
-								if (pts.size() > 0) {
-									dx = (int)pts.get(0).getX() - refPoint.x;
-									dy = (int)pts.get(0).getY() - refPoint.y;
+
+						state = aRobot.getState();
+						if ( state == GameState.PLAYING ) {
+							/*if (repeat != 0 && randomGenerator.nextInt(2) == 0 && _tpt != null && shot != null) {
+								ABObject obj = ABUtil.getLeftObsOfTrajectory(vision, _tpt, shot);
+								if (obj != null) {
+									_tpt = obj.getCenter();
+									_tpt.x -= obj.width;
+									_tpt.y -= obj.height;
+									pts = tp.estimateLaunchPoint(sling, _tpt);
+									if (pts.size() > 0) {
+										dx = (int)pts.get(0).getX() - refPoint.x;
+										dy = (int)pts.get(0).getY() - refPoint.y;
+										shot = new Shot(refPoint.x, refPoint.y, dx, dy, 0, tapTime);
+									}
+								}
+							}*/
+
+							if (repeat == 0 && !reachable && _tpt != null && shot != null) {
+								System.out.println("repeating " + vision.findBirdsMBR().size());
+								//screenshot = ActionRobot.doScreenShot();
+								//vision = new Vision(screenshot);
+								int difficulty = ABUtil.difficultyOfTrajectory(vision, _tpt, shot);
+								List<ABObject> birds = vision.findBirdsMBR();
+								boolean hit = false;
+								if (birds.size() <= 2 && birds.size() > 0 && birds.get(0).getType() == ABType.RedBird && difficulty > 2) {
+									System.out.println("repeating2 " + vision.findBirdsMBR().size());
+									if (birds.size() == 2) {
+										if (birds.get(1).getType() == ABType.RedBird) {
+											if (repeat != 0) {
+												hit = true;
+											} else {
+												if (randomGenerator.nextInt(2) == 0) {
+													hit = true;
+												}
+											}
+										}
+									} else {
+										hit = true;
+									}
+									System.out.println("repeating3");
+								}
+								System.out.println("repeating4");
+								if (randomGenerator.nextInt(5) == 0 || hit) {
+									List<ABObject> supporters = ABUtil.getSupporters(pig, findAllBlocks());
+									if (!supporters.isEmpty()) {
+										double min1 = 10000000;
+										ABObject obj = null; 
+										for (ABObject a: supporters) {
+											if (a.x < min1) {
+												min1 = a.x;
+												obj = a;
+											}
+										}
+										if (supporters.size() == 1) {
+											obj = supporters.get(0);
+											System.out.println("repeating - one obj");
+										}
+										if (obj != null) {
+											if (obj.getType() != ABType.Hill) {
+												_tpt = obj.getCenter();
+												_tpt.x -= obj.width;
+												pts = tp.estimateLaunchPoint(sling, _tpt);
+												if (pts.size() > 0) {
+													dx = (int)pts.get(0).getX() - refPoint.x;
+													dy = (int)pts.get(0).getY() - refPoint.y;
+													shot = new Shot(refPoint.x, refPoint.y, dx, dy, 0, tapTime);
+													System.out.println("repeating - left most");
+												}
+											}
+										}
+									}
+								}
+							}
+							System.out.println("repeating5");
+							if (ABUtil.isHillInBetween(vision, _tpt, shot) && randomGenerator.nextInt(2) == 0) {
+								if (pts.size() > 1 && !yellow) {
+									dx = (int)pts.get(1).getX() - refPoint.x;
+									dy = (int)pts.get(1).getY() - refPoint.y;
+									System.out.println("here2");
 									shot = new Shot(refPoint.x, refPoint.y, dx, dy, 0, tapTime);
 								}
 							}
-						}
-
-						if (repeat == 0 && !reachable && _tpt != null && shot != null) {
-							System.out.println("repeating " + vision.findBirdsMBR().size());
-							screenshot = ActionRobot.doScreenShot();
-							vision = new Vision(screenshot);
-							int difficulty = ABUtil.difficultyOfTrajectory(vision, _tpt, shot);
-							List<ABObject> birds = vision.findBirdsMBR();
-							boolean hit = false;
-							if (birds.size() == 1 && birds.get(0).getType() == ABType.RedBird && difficulty > 2) {
-								hit = true;
-							}
-							if (randomGenerator.nextInt(3) == 0 || hit) {
-								List<ABObject> supporters = ABUtil.getSupporters(pig, findAllBlocks());
-								if (!supporters.isEmpty()) {
-									double min1 = 10000000;
-									ABObject obj = null; 
-									for (ABObject a: supporters) {
-										if (a.x < min1) {
-											min1 = a.x;
-											obj = a;
-										}
-									}
-									if (supporters.size() == 1) {
-										obj = supporters.get(0);
-										System.out.println("repeating - one obj");
-									}
-									if (obj != null) {
-										if (obj.getType() != ABType.Hill) {
-											_tpt = obj.getCenter();
-											_tpt.x -= obj.width;
-											pts = tp.estimateLaunchPoint(sling, _tpt);
-											dx = (int)pts.get(0).getX() - refPoint.x;
-											dy = (int)pts.get(0).getY() - refPoint.y;
-											if (pts.size() > 0)
-												shot = new Shot(refPoint.x, refPoint.y, dx, dy, 0, tapTime);
-											System.out.println("repeating - left most");
-										}
-									}
-								}
-							}
-						}
-						if (ABUtil.isHillInBetween(vision, _tpt, shot)) {
-							if (pts.size() > 1 && !yellow) {
-								dx = (int)pts.get(1).getX() - refPoint.x;
-								dy = (int)pts.get(1).getY() - refPoint.y;
-								System.out.println("here2");
-								shot = new Shot(refPoint.x, refPoint.y, dx, dy, 0, tapTime);
-							}
+							System.out.println("repeating6");
 						}
 					}
 					else
