@@ -85,6 +85,30 @@ public class MainEntry {
 									Thread thre = new Thread(new ShowSeg());
 									thre.start();
 								}
+							} else if (command.equalsIgnoreCase("-sa")) {
+								SecondAgent na = new SecondAgent();
+								if(! (args[1].equalsIgnoreCase("-showMBR") || args[1].equals("-showReal")))
+								{
+									int initialLevel = 1;
+									try{
+										initialLevel = Integer.parseInt(args[1]);
+									}
+									catch (NumberFormatException e)
+									{
+										System.out.println("wrong level number, will use the default one");
+									}
+									na.currentLevel = initialLevel;
+									na.run();
+								}
+								else
+								{
+									Thread nathre = new Thread(na);
+									nathre.start();										   
+									if(args[1].equalsIgnoreCase("-showReal"))
+										ShowSeg.useRealshape = true;
+									Thread thre = new Thread(new ShowSeg());
+									thre.start();
+								}
 							} else if (command.equalsIgnoreCase("-mca")) {
 								MinCostAgent na = new MinCostAgent();
 								if(! (args[1].equalsIgnoreCase("-showMBR") || args[1].equals("-showReal")))

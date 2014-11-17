@@ -1,0 +1,15 @@
+Level 13:
+		Number of pigs: 3; 
+		Chosen pig: 0; 
+		RedBird: 0
+		Number of pigs: 2; 
+		Chosen pig: 0; 
+		RedBird: 0
+		Number of pigs: 2; 
+		Chosen pig: 0; 
+		RedBird: 0
+		Number of pigs: 1; 
+		Chosen pig: 0; 
+		RedBird: 0
+		Number of pigs: 1; 
+		Chosen pig: 0; 

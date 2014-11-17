@@ -26,8 +26,8 @@ import Jama.Matrix;
 
 public class VisionMBR {
 
-	private int _nHeight; // height of the scene
-	private int _nWidth; // width of the scene
+	public int _nHeight; // height of the scene
+	public int _nWidth; // width of the scene
 	public int _scene[][]; // quantized scene colours
 	private int _nSegments; // number of segments
 	private int _segments[][]; // connected components (0 to _nSegments)
